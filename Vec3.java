@@ -71,12 +71,6 @@ class Vec3 {
     public Vec3 div(double t) {
         return this.mul(1/t);
     }
-    
-    public void addInplace(Vec3 v) {
-        this.e[0] += v.e[0];
-        this.e[1] += v.e[1];
-        this.e[2] += v.e[2];
-    }
 
     public double dot(Vec3 v) {
         return this.e[0]*v.e[0] + this.e[1]*v.e[1] + this.e[2]*v.e[2];

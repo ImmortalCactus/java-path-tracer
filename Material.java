@@ -1,5 +1,5 @@
-public interface Material{
-    public ScatterRecord scatter(Ray rIn, HitRecord rec);
+abstract class Material{
+    abstract public ScatterRecord scatter(Ray rIn, HitRecord rec);
 }
 
 class ScatterRecord {
@@ -11,11 +11,11 @@ class ScatterRecord {
         this.scattered = scattered;
     };
 }
-class Lambertian implements Material {
+class Lambertian extends Material {
     private Vec3 albedo;
 
     Lambertian(Vec3 a) {
-        albedo = new Vec3(a);
+        albedo = a;
     }
 
     public ScatterRecord scatter(Ray rIn, HitRecord rec) {
@@ -31,7 +31,7 @@ class Lambertian implements Material {
     }
 }
 
-class Metallic implements Material {
+class Metallic extends Material {
     private double fuzz;
     private Vec3 albedo;
 

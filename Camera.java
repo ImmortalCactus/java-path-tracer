@@ -34,6 +34,9 @@ class Camera {
     }
 
     Ray getRay(double s, double t) {
-        return new Ray(origin, lowerLeftCorner.add(horizontal.mul(s)).add(vertical.mul(t)).sub(origin));
+        return new Ray(
+            origin,
+            lowerLeftCorner.add(horizontal.mul(s)).add(vertical.mul(t)).sub(origin)
+        );
     }
 }

@@ -1,7 +1,8 @@
 import java.util.ArrayList;
 
-interface Hittable { 
-    public HitRecord hit(Ray r, double tMin, double tMax);
+abstract class Hittable {
+    protected Material mat;
+    abstract public HitRecord hit(Ray r, double tMin, double tMax);
 }
 
 class HitRecord {
@@ -33,13 +34,12 @@ class HitRecord {
 }
     
 
-class Sphere implements Hittable {
+class Sphere extends Hittable {
     private Vec3 center;
     private double radius;
-    private Material mat;
 
     public Sphere(Vec3 c, double r, Material m) {
-        center = new Vec3(c);
+        center = c;
         radius = r;
         this.mat = m;
     }
@@ -80,7 +80,7 @@ class Sphere implements Hittable {
 
 
 
-class HittableList implements Hittable {
+class HittableList extends Hittable {
     private ArrayList<Hittable> objects = new ArrayList<Hittable>();
     
     public HittableList() {};

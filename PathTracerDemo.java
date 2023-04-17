@@ -35,7 +35,7 @@ class PathTracerDemo {
                     double v = (j + Math.random()) / (imageHeight-1);
                     Ray r = cam.getRay(u, v);
                     Vec3 c = rayColor(r, world, maxDepth);
-                    pixelColor.addInplace(c);
+                    pixelColor = pixelColor.add(c);
                 }
                 writeColor(pixelColor, samplesPerPixel);
             }
