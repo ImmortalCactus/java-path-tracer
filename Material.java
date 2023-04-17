@@ -3,12 +3,10 @@ public interface Material{
 }
 
 class ScatterRecord {
-    public final boolean notAbsorbed;
     public final Vec3 attenuation;
     public final Ray scattered;
 
-    public ScatterRecord(boolean notAbsorbed, Vec3 attenuation, Ray scattered) {
-        this.notAbsorbed = notAbsorbed;
+    public ScatterRecord(Vec3 attenuation, Ray scattered) {
         this.attenuation = attenuation;
         this.scattered = scattered;
     };
@@ -27,7 +25,6 @@ class Lambertian implements Material {
         }
 
         return new ScatterRecord(
-                    true,
                     albedo,
                     new Ray(rec.p, scatterDirection)
                 );
@@ -45,11 +42,12 @@ class Metallic implements Material {
 
     public ScatterRecord scatter(Ray rIn, HitRecord rec) {
         Vec3 reflected = rIn.direction().reflect(rec.normal);
+        Vec3 fuzzed = reflected.add(Vec3.randomInUnitSphere().mul(fuzz));
 
+        if (fuzzed.dot(rec.normal) <= 0) fuzzed = reflected;
         return new ScatterRecord(
-            true,
             albedo,
-            new Ray(rec.p, reflected)
+            new Ray(rec.p, fuzzed)
         );
     }
 }

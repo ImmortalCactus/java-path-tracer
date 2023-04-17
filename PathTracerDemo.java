@@ -9,7 +9,7 @@ class PathTracerDemo {
         // Create the scene hittable
 
         Sphere sphere0 = new Sphere(new Vec3(1.1, 0, 0), 1, new Lambertian(new Vec3(0.2, 0.8, 0.4)));
-        Sphere sphere1 = new Sphere(new Vec3(-1.1, 0, 0), 1, new Metallic(new Vec3(0.7, 0.4, 0.4), 0.0));
+        Sphere sphere1 = new Sphere(new Vec3(-1.1, 0, 0), 1, new Metallic(new Vec3(0.7, 0.4, 0.4), 0.1));
         HittableList world = new HittableList();
         world.add(sphere0);
         world.add(sphere1);
@@ -30,11 +30,6 @@ class PathTracerDemo {
             System.err.flush();
             for (int i = 0; i < imageWidth; i++) {
                 Vec3 pixelColor = new Vec3();
-                /*double uu = (i + Math.random()) / (imageWidth-1);
-                double vv = (j + Math.random()) / (imageHeight-1);
-                Ray rr = cam.getRay(uu, vv);
-                String outString = String.format("o: (%f, %f, %f), d: (%f, %f, %f)\n", rr.origin().x(), rr.origin().y(), rr.origin().z(), rr.direction().x(), rr.direction().y(), rr.direction().z());
-                System.err.print(outString);*/
                 for (int s = 0; s < samplesPerPixel; ++s) {
                     double u = (i + Math.random()) / (imageWidth-1);
                     double v = (j + Math.random()) / (imageHeight-1);
@@ -61,14 +56,12 @@ class PathTracerDemo {
         if (rec.hit) {
             //System.err.println("HIT!!");
             ScatterRecord sRec = rec.mat.scatter(r, rec);
-            if(sRec.notAbsorbed) {
-                Vec3 secondRayColor = rayColor(sRec.scattered, world, depth-1);
-                
-                return new Vec3(sRec.attenuation.x() * secondRayColor.x(),
-                                sRec.attenuation.y() * secondRayColor.y(),
-                                sRec.attenuation.z() * secondRayColor.z());
-            }
-            return new Vec3();
+            Vec3 secondRayColor = rayColor(sRec.scattered, world, depth-1);
+            
+            return new Vec3(sRec.attenuation.x() * secondRayColor.x(),
+                            sRec.attenuation.y() * secondRayColor.y(),
+                            sRec.attenuation.z() * secondRayColor.z());
+    
         }
         Vec3 unitDirection = r.direction().unit();
         double t = 0.5*(unitDirection.y() + 1.0);
