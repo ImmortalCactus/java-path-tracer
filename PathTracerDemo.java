@@ -26,24 +26,28 @@ class PathTracerDemo {
         Camera cam = new Camera(lookFrom, lookAt, vUp, 20, aspectRatio, aperture, distToFocus);
         // Output to file
 
-        System.out.print("P3\n" + imageWidth + " " + imageHeight + "\n255\n");
-        for (int j = imageHeight; j>=0; j--) {
+        PPMArray ppmArrayObj = new PPMArray(imageHeight, imageWidth, samplesPerPixel);
+
+        //System.out.print("P3\n" + imageWidth + " " + imageHeight + "\n255\n");
+        for (int j = imageHeight-1; j>=0; j--) {
             System.err.print("\rScanlines remaining: "+j+" ");
             System.err.flush();
             for (int i = 0; i < imageWidth; i++) {
-                Vec3 pixelColor = new Vec3();
+                //Vec3 pixelColor = new Vec3();
                 for (int s = 0; s < samplesPerPixel; ++s) {
                     double u = (i + Math.random()) / (imageWidth-1);
                     double v = (j + Math.random()) / (imageHeight-1);
                     Ray r = cam.getRay(u, v);
                     Vec3 c = rayColor(r, world, maxDepth);
-                    pixelColor = pixelColor.add(c);
+                    //pixelColor = pixelColor.add(c);
+                    ppmArrayObj.addPixel(imageHeight-1-j, i, c);
                 }
-                writeColor(pixelColor, samplesPerPixel);
+                //writeColor(pixelColor, samplesPerPixel);
             }
         }
         System.out.flush();
         System.err.print("\nDone\n");
+        ppmArrayObj.print();
     }
 
     private static final double near = 1e-8;
@@ -67,23 +71,5 @@ class PathTracerDemo {
         Vec3 unitDirection = r.direction().unit();
         double t = 0.5*(unitDirection.y() + 1.0);
         return (new Vec3(1.0, 1.0, 1.0)).mul(1.0-t).add((new Vec3(0.5, 0.7, 1.0)).mul(t));
-    }
-
-    private static void writeColor(Vec3 pixelColor, int samplesPerPixel) {
-        double r = pixelColor.x();
-        double g = pixelColor.y();
-        double b = pixelColor.z();
-
-        double scale = 1.0 / samplesPerPixel;
-        double gamma = 2.0;
-        r = Math.pow(r * scale, 1/gamma);
-        g = Math.pow(g * scale, 1/gamma);
-        b = Math.pow(b * scale, 1/gamma);
-        
-        r = (int)(256 * Math.max(Math.min(r, 0.999), 0.0));
-        g = (int)(256 * Math.max(Math.min(g, 0.999), 0.0));
-        b = (int)(256 * Math.max(Math.min(b, 0.999), 0.0));
-
-        System.out.print(r+" "+g+" "+b+"\n");
     }
 }
