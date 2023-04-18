@@ -1,14 +1,22 @@
 public class PPMArray {
-    double[][][] colorPixels;
-    int width;
-    int height;
-    int numSamples;
+    private double[][][] colorPixels;
+    private int width;
+    private int height;
+    private int numSamples;
 
     public PPMArray(int h, int w, int s) {
         colorPixels = new double[h][w][3];
         width = w;
         height = h;
         numSamples = s;
+    }
+
+    public int getWidth() {
+        return this.width;
+    }
+
+    public int getHeight() {
+        return this.height;
     }
 
     synchronized public void addPixel(int hIndex, int wIndex, Vec3 color) {

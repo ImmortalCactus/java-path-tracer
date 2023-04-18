@@ -1,5 +1,5 @@
 class PathTracerDemo {
-    public static void main(String[] args){
+    public static void main(String[] args) throws InterruptedException {
         // Specify the parameters
         double aspectRatio = 3.0/2.0;
         int imageWidth = 1200;
@@ -33,16 +33,11 @@ class PathTracerDemo {
             System.err.print("\rScanlines remaining: "+j+" ");
             System.err.flush();
             for (int i = 0; i < imageWidth; i++) {
-                //Vec3 pixelColor = new Vec3();
                 for (int s = 0; s < samplesPerPixel; ++s) {
-                    double u = (i + Math.random()) / (imageWidth-1);
-                    double v = (j + Math.random()) / (imageHeight-1);
-                    Ray r = cam.getRay(u, v);
-                    Vec3 c = rayColor(r, world, maxDepth);
-                    //pixelColor = pixelColor.add(c);
-                    ppmArrayObj.addPixel(imageHeight-1-j, i, c);
+                    PathTracingThread t = new PathTracingThread(i, j, ppmArrayObj, cam, world, maxDepth);
+                    t.start();
+                    t.join();
                 }
-                //writeColor(pixelColor, samplesPerPixel);
             }
         }
         System.out.flush();
@@ -71,5 +66,35 @@ class PathTracerDemo {
         Vec3 unitDirection = r.direction().unit();
         double t = 0.5*(unitDirection.y() + 1.0);
         return (new Vec3(1.0, 1.0, 1.0)).mul(1.0-t).add((new Vec3(0.5, 0.7, 1.0)).mul(t));
+    }
+
+
+    static private class PathTracingThread extends Thread {
+        private int i;
+        private int j;
+        private PPMArray ppmArrayObj;
+        private Camera cam;
+        private Hittable world;
+        private int maxDepth;
+
+        public PathTracingThread(int i, int j, PPMArray ppmArrayObj, Camera cam, Hittable world, int maxDepth) {
+            this.i = i;
+            this.j = j;
+            this.ppmArrayObj = ppmArrayObj;
+            this.cam = cam;
+            this.world = world;
+            this.maxDepth = maxDepth;
+        }
+        
+        public void run() {
+            int width = ppmArrayObj.getWidth();
+            int height = ppmArrayObj.getHeight();
+
+            double u = (i + Math.random()) / (width-1);
+            double v = (j + Math.random()) / (height-1);
+            Ray r = cam.getRay(u, v);
+            Vec3 c = rayColor(r, world, maxDepth);
+            ppmArrayObj.addPixel(height-1-j, i, c);
+        }
     }
 }
