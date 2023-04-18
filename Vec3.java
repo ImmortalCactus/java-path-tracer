@@ -105,4 +105,14 @@ class Vec3 {
         return uThis.add(uNormal.mul(-2*uThis.dot(uNormal)));
     }
 
+    public Vec3 refract(Vec3 normal, double etaiOverEtaT){
+        Vec3 uThis = this.unit();
+        Vec3 uNormal = normal.unit();
+        Vec3 rPerp = uNormal.mul(uThis.dot(uNormal));
+        Vec3 rParallel = uThis.sub(rPerp);
+        Vec3 tParallel = rParallel.mul(etaiOverEtaT);
+        Vec3 tPerp = rPerp.unit().mul(Math.sqrt(1 - tParallel.lengthSquared()));
+        return tParallel.add(tPerp);
+    }
+
 }

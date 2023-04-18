@@ -8,15 +8,17 @@ class PathTracerDemo {
         int maxDepth = 50;
         // Create the scene hittable
 
-        Sphere sphere0 = new Sphere(new Vec3(1.1, 0, 0), 1, new Lambertian(new Vec3(0.2, 0.8, 0.4)));
-        Sphere sphere1 = new Sphere(new Vec3(-1.1, 0, 0), 1, new Metallic(new Vec3(0.7, 0.4, 0.4), 0.1));
+        Sphere sphere0 = new Sphere(new Vec3(1.1, 1, 0), 1, new Dielectric(1.05));
+        Sphere sphere1 = new Sphere(new Vec3(-1.1, 1, 0), 1, new Metallic(new Vec3(0.7, 0.4, 0.4), 0.1));
+        Sphere floor = new Sphere(new Vec3(0, -100, 0), 100, new Lambertian(new Vec3(0.9, 0.9, 0.1)));
         HittableList world = new HittableList();
         world.add(sphere0);
         world.add(sphere1);
+        world.add(floor);
         // Specify the materials
         // Add the objects into the scene
         // Specify camera
-        Vec3 lookFrom = new Vec3(0, 0, -10);
+        Vec3 lookFrom = new Vec3(0, 5, -10);
         Vec3 lookAt = new Vec3(0, 0, 0);
         Vec3 vUp = new Vec3(0, 1, 0);
         double distToFocus = 5.0;
@@ -54,7 +56,6 @@ class PathTracerDemo {
         }
         HitRecord rec = world.hit(r, near, far);
         if (rec.hit) {
-            //System.err.println("HIT!!");
             ScatterRecord sRec = rec.mat.scatter(r, rec);
             Vec3 secondRayColor = rayColor(sRec.scattered, world, depth-1);
             

@@ -14,7 +14,7 @@ class ScatterRecord {
 class Lambertian extends Material {
     private Vec3 albedo;
 
-    Lambertian(Vec3 a) {
+    public Lambertian(Vec3 a) {
         albedo = a;
     }
 
@@ -35,7 +35,7 @@ class Metallic extends Material {
     private double fuzz;
     private Vec3 albedo;
 
-    Metallic(Vec3 a, double f) {
+    public Metallic(Vec3 a, double f) {
         albedo = a;
         fuzz = f;
     }
@@ -49,5 +49,34 @@ class Metallic extends Material {
             albedo,
             new Ray(rec.p, fuzzed)
         );
+    }
+}
+
+class Dielectric extends Material {
+    private double ior;
+    
+    public Dielectric(double eta) {
+        ior = eta;
+    }
+
+    public ScatterRecord scatter(Ray rIn, HitRecord rec) {
+        double refractRatio = rec.frontFace? 1/ior : ior; // \eta_i / \eta_t
+        double cosTheta = -rIn.direction().unit().dot(rec.normal.unit());
+        double sinTheta = Math.sqrt(1-Math.pow(cosTheta, 2));
+
+        Vec3 transmitted;
+
+        if(refractRatio * sinTheta >= 1 || Math.random() <= reflectance(sinTheta, cosTheta)){
+            transmitted = rIn.direction().reflect(rec.normal);
+        } else {
+            transmitted = rIn.direction().refract(rec.normal, refractRatio);
+        }
+
+        return new ScatterRecord(new Vec3(1.0, 1.0, 1.0), new Ray(rec.p, transmitted));
+    }
+
+    private double reflectance(double eta, double cosTheta) {
+        double r0 = Math.pow((1-eta)/(1+eta), 2);
+        return r0 + (1-r0) * Math.pow(1-cosTheta, 5);
     }
 }

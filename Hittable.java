@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 
 abstract class Hittable {
-    protected Material mat;
     abstract public HitRecord hit(Ray r, double tMin, double tMax);
 }
 
@@ -37,6 +36,7 @@ class HitRecord {
 class Sphere extends Hittable {
     private Vec3 center;
     private double radius;
+    private Material mat;
 
     public Sphere(Vec3 c, double r, Material m) {
         center = c;
@@ -90,7 +90,7 @@ class HittableList extends Hittable {
         for(Hittable ob : objects) {
             HitRecord currentHR = ob.hit(r, tMin, tMax);
             if(currentHR.hit == false) continue;
-            if(closestHit == null || closestHit.t < currentHR.t) {
+            if(closestHit == null || closestHit.t > currentHR.t) {
                 closestHit = currentHR;
             }
         }
