@@ -1,3 +1,5 @@
+import java.util.concurrent.ThreadLocalRandom;
+
 abstract class Material{
     abstract public ScatterRecord scatter(Ray rIn, HitRecord rec);
 }
@@ -66,7 +68,7 @@ class Dielectric extends Material {
 
         Vec3 transmitted;
 
-        if(refractRatio * sinTheta >= 1 || Math.random() <= reflectance(sinTheta, cosTheta)){
+        if(refractRatio * sinTheta >= 1 || ThreadLocalRandom.current().nextDouble(0, 1) <= reflectance(refractRatio, cosTheta)){
             transmitted = rIn.direction().reflect(rec.normal);
         } else {
             transmitted = rIn.direction().refract(rec.normal, refractRatio);

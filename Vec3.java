@@ -1,3 +1,5 @@
+import java.util.concurrent.ThreadLocalRandom;
+
 class Vec3 {
     protected double[] e;
 
@@ -14,11 +16,15 @@ class Vec3 {
     }
 
     public static Vec3 random(){
-        return new Vec3(Math.random()*2-1, Math.random()*2-1, Math.random()*2-1);
+        return new Vec3(ThreadLocalRandom.current().nextDouble(-1, 1),
+                        ThreadLocalRandom.current().nextDouble(-1, 1), 
+                        ThreadLocalRandom.current().nextDouble(-1, 1));
     }
 
     public static Vec3 random(double min, double max){
-        return new Vec3(Math.random()*(max-min)+min, Math.random()*(max-min)+min, Math.random()*(max-min)+min);
+        return new Vec3(ThreadLocalRandom.current().nextDouble(min, max),
+                        ThreadLocalRandom.current().nextDouble(min, max), 
+                        ThreadLocalRandom.current().nextDouble(min, max));
     }
     
     public static Vec3 randomInUnitSphere() {
@@ -40,7 +46,9 @@ class Vec3 {
     
     public static Vec3 randomInUnitDisk() {
         while(true) {
-            Vec3 p = new Vec3(Math.random()*2-1, Math.random()*2-1, 0);
+            Vec3 p = new Vec3(ThreadLocalRandom.current().nextDouble(-1, 1),
+                                ThreadLocalRandom.current().nextDouble(-1, 1),
+                                0);
             if (p.lengthSquared() >= 1) continue;
             return p;
         }
