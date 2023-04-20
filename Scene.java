@@ -50,17 +50,13 @@ public class Scene {
                             Vec3 c = rayColor(r, maxDepth);
                             
                             ppmArrayObj.addPixel(imageHeight-1-j, i, c);
-                            this.scanlinesLeft--;
                         }
                     }
-                    // System.err.print("\r"+this.scanlinesLeft+" lines left.");
-                    // System.err.flush();
+                    this.scanlinesLeft--;
+                    System.err.print("\r"+this.scanlinesLeft+" lines left.");
+                    System.err.flush();
                 }
-                //System.err.print(counter + " meow\n");
-                //System.err.flush();
             });
-            //System.err.print(t + " owo\n");
-            //System.err.flush();
         }
 
         executor.shutdown();

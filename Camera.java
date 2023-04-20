@@ -34,9 +34,12 @@ class Camera {
     }
 
     Ray getRay(double s, double t) {
-        return new Ray(
-            origin,
-            lowerLeftCorner.add(horizontal.mul(s)).add(vertical.mul(t)).sub(origin)
+        Vec3 blur = Vec3.randomInUnitDisk();
+	Vec3 offset = u.mul(blur.x()).add(v.mul(blur.y())).mul(this.lensRadius);
+	return new Ray(
+            origin.add(offset),
+            lowerLeftCorner.add(horizontal.mul(s)).add(vertical.mul(t))
+	    	.sub(origin.add(offset))
         );
     }
 }

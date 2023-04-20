@@ -3,7 +3,7 @@ import java.util.ArrayList;
 abstract class Hittable {
     abstract public HitRecord hit(Ray r, double tMin, double tMax);
 }
-
+    
 class HitRecord {
     public final boolean hit;
     public final Vec3 p;
@@ -31,7 +31,6 @@ class HitRecord {
         this.frontFace = false;
     }
 }
-    
 
 class Sphere extends Hittable {
     private Vec3 center;
@@ -86,12 +85,14 @@ class HittableList extends Hittable {
     public HittableList() {};
 
     public HitRecord hit(Ray r, double tMin, double tMax) {
+        double far = tMax;
         HitRecord closestHit = null;
         for(Hittable ob : objects) {
-            HitRecord currentHR = ob.hit(r, tMin, tMax);
+            HitRecord currentHR = ob.hit(r, tMin, far);
             if(currentHR.hit == false) continue;
             if(closestHit == null || closestHit.t > currentHR.t) {
                 closestHit = currentHR;
+                far = closestHit.t;
             }
         }
         if(closestHit == null) return new HitRecord(false);

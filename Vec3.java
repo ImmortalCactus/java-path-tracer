@@ -10,6 +10,10 @@ class Vec3 {
     public Vec3(double e0, double e1, double e2) {
         e = new double[]{e0, e1, e2};
     }
+    
+    public Vec3(double[] e) {
+        this.e = new double[]{e[0], e[1], e[2]};
+    }
 
     public Vec3(Vec3 v) {
         e = new double[]{v.e[0], v.e[1], v.e[2]};
