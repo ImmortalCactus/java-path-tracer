@@ -9,7 +9,7 @@ class PathTracerDemo {
         int samplesPerPixel = 100;
         int maxDepth = 50;
 
-        int numThreads = 2;
+        int numThreads = 8;
         // Create the scene hittable
 
         Sphere sphere0 = new Sphere(new Vec3(0, 0, -1.0), 0.5, new Dielectric(1.5));

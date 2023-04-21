@@ -95,20 +95,36 @@ class Model extends Hittable {
         Vec3 p0 = new Vec3(vertexArray[indexArray[faceIndex][0]-1]); 
         Vec3 p1 = new Vec3(vertexArray[indexArray[faceIndex][1]-1]);
         Vec3 p2 = new Vec3(vertexArray[indexArray[faceIndex][2]-1]);
+        
+        Vec3 o = r.origin();
+        Vec3 d = r.direction();
+
+        Vec3 pp0 = p0.sub(o);
+        Vec3 pp1 = p1.sub(o);
+        Vec3 pp2 = p2.sub(o);
+
+        double dsq = d.lengthSquared();
+
+        double tpp0 = pp0.dot(d) / dsq;
+        double tpp1 = pp1.dot(d) / dsq;
+        double tpp2 = pp2.dot(d) / dsq;
+
+        if ( Math.max(tpp0, Math.max(tpp1, tpp2)) < tMin ||
+            Math.min(tpp0, Math.min(tpp1, tpp2)) > tMax) return null;
 
         Vec3 v1 = p1.sub(p0);
         Vec3 v2 = p2.sub(p0);
 
         Vec3 uNormal = v1.cross(v2).unit();
-        Vec3 uDir = r.direction().unit();
+        Vec3 uDir = d.unit();
 
         if (Math.abs(uNormal.dot(uDir)) > (1 - 1e-8)) return null;
 
-        double t = (p0.sub(r.origin()).dot(uNormal))/(r.direction().dot(uNormal));
+        double t = (p0.sub(o).dot(uNormal))/(d.dot(uNormal));
         
         if (t < tMin || t > tMax) return null;
 
-        Vec3 projected = r.origin().add(r.direction().mul(t));
+        Vec3 projected = o.add(d.mul(t));
         Vec3 vp = projected.sub(p0);
 
         double c = v2.x() / v2.y();
@@ -118,7 +134,7 @@ class Model extends Hittable {
         if (u < 0 || v < 0 || u + v > 1) return null;
 
         boolean frontFace = true;
-        if (uNormal.dot(r.direction()) > 0){
+        if (uNormal.dot(d) > 0){
             uNormal = uNormal.neg();
             frontFace = false;
         }
