@@ -82,7 +82,7 @@ class Model extends Hittable {
         //System.err.println(String.format("%f %f %f", boundingSphereCenter.x(), boundingSphereCenter.y(), boundingSphereCenter.z()));
         //System.err.println(boundingSphereRadius);
 
-        Vec3 boxHalf = (new Vec3(1, 1, 1)).mul(Math.sqrt(boundingSphereRadius));
+        Vec3 boxHalf = (new Vec3(2, 2, 2)).mul(Math.sqrt(boundingSphereRadius));
         Vec3 min = boundingSphereCenter.sub(boxHalf);
         Vec3 max = boundingSphereCenter.add(boxHalf);
         ArrayList<Integer> initialIndicesList = new ArrayList<>();
@@ -134,19 +134,22 @@ class Model extends Hittable {
         if (t < tMin || t > tMax) return null;
 
         Vec3 projected = o.add(d.mul(t));
-        Vec3 vp = projected.sub(p0);
+        Vec3 vpp0 = p0.sub(projected);
+        Vec3 vpp1 = p1.sub(projected);
+        Vec3 vpp2 = p2.sub(projected);
 
-        double c = v2.x() / v2.y();
-        double u = (vp.x()-vp.y()*c) / (v1.x()-v1.y()*c);
-        double v = (vp.x() - u * v1.x()) / v2.x();
-
-        if (u < 0 || v < 0 || u + v > 1) return null;
+        Vec3 cross0 = vpp1.cross(vpp2);
+        Vec3 cross1 = vpp2.cross(vpp0);
+        Vec3 cross2 = vpp0.cross(vpp1);
+        
+        if (cross0.dot(cross1) < 0 || cross1.dot(cross2) < 0 || cross2.dot(cross0) < 0) return null;
 
         boolean frontFace = true;
         if (uNormal.dot(d) > 0){
             uNormal = uNormal.neg();
             frontFace = false;
         }
+        //System.err.println(faceIndex);
         return new HitRecord(
                 true,
                 t,
@@ -157,7 +160,7 @@ class Model extends Hittable {
     }
 
     public HitRecord hit(Ray r, double tMin, double tMax) {
-        if (root.intersectBoundingBox(r) < 0) return new HitRecord(false);
+        if (root.intersectBoundingBox(r, tMin, tMax) < 0) return new HitRecord(false);
         HitRecord hr = root.hit(r, tMin, tMax);
         if (hr == null) return new HitRecord(false);
         return hr;
@@ -221,7 +224,7 @@ class Model extends Hittable {
         }
 
 
-        public double intersectBoundingBox(Ray r) {
+        public double intersectBoundingBox(Ray r, double tMin, double tMax) {
             Vec3 o = r.origin();
             Vec3 d = r.direction();
             double[] tmin = {(min.x()-o.x())/d.x(), (min.y()-o.y())/d.y(), (min.z()-o.z())/d.z()};
@@ -236,7 +239,7 @@ class Model extends Hittable {
             final double EPSILON = 1e-8;
 
             if (tfar < 0 || tnear > tfar) return -1;
-            if (tnear < 0) return 0;
+            if (tnear < 0) return tMin;
             Vec3 p = o.add(d.mul(tnear));   
             if (p.x() >= min.x()-EPSILON && p.x() <= max.x()+EPSILON &&
                 p.y() >= min.y()-EPSILON && p.y() <= max.y()+EPSILON &&
@@ -251,7 +254,7 @@ class Model extends Hittable {
                 ArrayList<Integer> intersectBoxIndices = new ArrayList<Integer>();
                 double[] tVals = new double[8];
                 for(int i = 0; i < 8; i++) {
-                    tVals[i] = childNodes.get(i).intersectBoundingBox(r);
+                    tVals[i] = childNodes.get(i).intersectBoundingBox(r, tMin, far);
                     if(tVals[i] >= 0) intersectBoxIndices.add(i);
                 }
                 Collections.sort(intersectBoxIndices, (i1, i2)->{

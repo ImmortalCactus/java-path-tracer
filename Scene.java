@@ -82,14 +82,21 @@ public class Scene {
         HitRecord rec = world.hit(r, near, far);
         if (rec.hit) {
             //return rec.normal.unit().mul(2).sub(new Vec3(1, 1, 1));
-
+            //return (new Vec3(1, 0, 0)).mul((rec.t * r.direction().length() - 20) / 10);
+            /*return new Vec3(
+                    (rec.p.x() + 5) / 10,
+                    (rec.p.y() + 5) / 10,
+                    (rec.p.z() + 5) / 10
+                    );
+            */
+            
             ScatterRecord sRec = rec.mat.scatter(r, rec);
             Vec3 secondRayColor = rayColor(sRec.scattered, depth-1);
             
             return new Vec3(sRec.attenuation.x() * secondRayColor.x(),
                             sRec.attenuation.y() * secondRayColor.y(),
                             sRec.attenuation.z() * secondRayColor.z());
-    
+             
         }
         Vec3 unitDirection = r.direction().unit();
         double t = 0.5*(unitDirection.y() + 1.0);
