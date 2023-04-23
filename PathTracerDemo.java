@@ -6,7 +6,7 @@ class PathTracerDemo {
         double aspectRatio = 3.0/2.0;
         int imageWidth = 1200;
         int imageHeight = (int)(imageWidth / aspectRatio);
-        int samplesPerPixel = 1;
+        int samplesPerPixel = 20;
         int maxDepth = 20;
 
         int numThreads = 8;

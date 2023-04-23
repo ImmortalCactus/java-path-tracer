@@ -2,13 +2,11 @@ public class PPMArray {
     private double[][][] colorPixels;
     private int width;
     private int height;
-    private int numSamples;
 
-    public PPMArray(int h, int w, int s) {
+    public PPMArray(int h, int w) {
         colorPixels = new double[h][w][3];
         width = w;
         height = h;
-        numSamples = s;
     }
 
     public int getWidth() {
@@ -41,11 +39,10 @@ public class PPMArray {
         double g = colorSum[1];
         double b = colorSum[2];
 
-        double scale = 1.0 / numSamples;
         double gamma = 2.2;
-        r = Math.pow(r * scale, 1/gamma);
-        g = Math.pow(g * scale, 1/gamma);
-        b = Math.pow(b * scale, 1/gamma);
+        r = Math.pow(r, 1/gamma);
+        g = Math.pow(g, 1/gamma);
+        b = Math.pow(b, 1/gamma);
         
         r = (int)(256 * Math.max(Math.min(r, 0.999), 0.0));
         g = (int)(256 * Math.max(Math.min(g, 0.999), 0.0));

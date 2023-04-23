@@ -17,7 +17,7 @@ public class Scene {
 
     private int numThreads;
 
-    private int scanlinesLeft;
+    private int samplesLeft;
 
     public Scene(int h, int w, int s, int d, Hittable world, Camera cam, int numThreads) {
         this.imageHeight = h;
@@ -28,32 +28,29 @@ public class Scene {
 
         this.world = world;
         this.cam = cam;
-        this.ppmArrayObj = new PPMArray(imageHeight, imageWidth, samplesPerPixel);
-
-        this.scanlinesLeft = imageHeight;
+        this.ppmArrayObj = new PPMArray(imageHeight, imageWidth);
     }
 
     public void rayTrace() {
         ExecutorService executor = Executors.newFixedThreadPool(numThreads);
-        int taskPerThread = imageHeight / numThreads + 1;
-
+        int taskPerThread = samplesPerPixel / numThreads + 1;
+        this.samplesLeft = this.samplesPerPixel;
         for (int t = 0; t < numThreads; t++){
             final int tt = t;
             executor.execute(()->{
-                //int counter = 0;
-                for (int j = tt * taskPerThread; j < Math.min((tt + 1) * taskPerThread, imageHeight); j++) {
-                    for (int i = 0; i < imageWidth; i++) {
-                        for (int s = 0; s < samplesPerPixel; ++s) {
+                for (int s = tt * taskPerThread; s < Math.min((tt + 1) * taskPerThread, samplesPerPixel); s++) {
+                    for (int j = 0; j < imageHeight; j++) {
+                        for (int i = 0; i < imageWidth; i++) {
                             double u = (i + ThreadLocalRandom.current().nextDouble(0, 1)) / (imageWidth-1);
                             double v = (j + ThreadLocalRandom.current().nextDouble(0, 1)) / (imageHeight-1);
                             Ray r = cam.getRay(u, v);
                             Vec3 c = rayColor(r, maxDepth);
                             
-                            ppmArrayObj.addPixel(imageHeight-1-j, i, c);
+                            ppmArrayObj.addPixel(imageHeight-1-j, i, c.div(samplesPerPixel));
                         }
                     }
-                    this.scanlinesLeft--;
-                    System.err.print("\r"+this.scanlinesLeft+" lines left.");
+                    this.samplesLeft--;
+                    System.err.print("\r" + this.samplesLeft + " samples left.");
                     System.err.flush();
                 }
             });
@@ -81,15 +78,6 @@ public class Scene {
         }
         HitRecord rec = world.hit(r, near, far);
         if (rec.hit) {
-            //return rec.normal.unit().mul(2).sub(new Vec3(1, 1, 1));
-            //return (new Vec3(1, 0, 0)).mul((rec.t * r.direction().length() - 20) / 10);
-            /*return new Vec3(
-                    (rec.p.x() + 5) / 10,
-                    (rec.p.y() + 5) / 10,
-                    (rec.p.z() + 5) / 10
-                    );
-            */
-            
             ScatterRecord sRec = rec.mat.scatter(r, rec);
             Vec3 secondRayColor = rayColor(sRec.scattered, depth-1);
             
