@@ -58,6 +58,7 @@ public class Scene {
                 }
             });
         }
+        System.err.println("Threads created.");
 
         executor.shutdown();
 
@@ -80,6 +81,8 @@ public class Scene {
         }
         HitRecord rec = world.hit(r, near, far);
         if (rec.hit) {
+            //return rec.normal.unit().mul(2).sub(new Vec3(1, 1, 1));
+
             ScatterRecord sRec = rec.mat.scatter(r, rec);
             Vec3 secondRayColor = rayColor(sRec.scattered, depth-1);
             

@@ -76,11 +76,11 @@ class Model extends Hittable {
         for(int i=0; i<numVertex; i++) {
             boundingSphereRadius = Math.max(boundingSphereRadius, vertexArray[i].sub(boundingSphereCenter).lengthSquared());
         }
-        System.err.println(numVertex);
-        System.err.println(numFace);
+        //System.err.println(numVertex);
+        //System.err.println(numFace);
 
-        System.err.println(String.format("%f %f %f", boundingSphereCenter.x(), boundingSphereCenter.y(), boundingSphereCenter.z()));
-        System.err.println(boundingSphereRadius);
+        //System.err.println(String.format("%f %f %f", boundingSphereCenter.x(), boundingSphereCenter.y(), boundingSphereCenter.z()));
+        //System.err.println(boundingSphereRadius);
 
         Vec3 boxHalf = (new Vec3(1, 1, 1)).mul(Math.sqrt(boundingSphereRadius));
         Vec3 min = boundingSphereCenter.sub(boxHalf);
@@ -88,7 +88,9 @@ class Model extends Hittable {
         ArrayList<Integer> initialIndicesList = new ArrayList<>();
         for(int i=0; i<numFace; i++) initialIndicesList.add(i);
         
+        System.err.println("Creating octree.");
         root = new Node(min, max, initialIndicesList, 10);
+        System.err.println("Finished octree.");
     }
 
     private boolean inBoundingSphere(Ray r) {
@@ -175,7 +177,7 @@ class Model extends Hittable {
             //System.err.println(depth + " " + min.x() + " " + max.x());
             
             if (depth == 0 || faceIndices.size() < MIN_TRIANGLES) {
-                if(faceIndices.size() > 0) System.err.println(faceIndices.size());
+                //if(faceIndices.size() > 0) System.err.println(faceIndices.size());
                 this.faceIndices = faceIndices;
                 this.childNodes = null;
                 return;
