@@ -13,7 +13,7 @@ class PathTracerDemo {
         // Create the scene hittable
 
         HittableList world = new HittableList();
-        Model glassBunny = new Model("./model/bunny.obj", new Lambertian(new Vec3(0.2, 0.6, 0.2)));
+        Model glassBunny = new Model("./model/bunny.obj", new Dielectric(1.333));
         Rect floor = new Rect(
                 new Vec3(0, 0, 0),
                 new Vec3(0.2, 0, 0),
