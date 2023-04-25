@@ -29,6 +29,11 @@ class PathTracerDemo {
                 new Vec3(0, 0.2, 0),
                 new Vec3(0, 0, 0.2),
                 new Lambertian(new Vec3(0.2, 0.4, 0.2)));
+        Rect back = new Rect(
+                new Vec3(0, 0.2, 0.2),
+                new Vec3(0, 0.2, 0),
+                new Vec3(0.2, 0, 0),
+                new Metallic(new Vec3(0.5, 0.5, 0.5), 0));
         //Model metalBunny = new Model("./model/teapot.obj", new Metallic(new Vec3(1.0, 0.2, 0.2), 0));
         //Sphere sphere1 = new Sphere(new Vec3(0, 0.4, -0.4), 0.3, new Dielectric(1.1));
         //Sphere floor = new Sphere(new Vec3(0, -100, 0), 100, new Lambertian(new Vec3(0.1, 0.5, 0.3)));
@@ -36,6 +41,7 @@ class PathTracerDemo {
         world.add(floor);
         world.add(right);
         world.add(left);
+        world.add(back);
         world.add(glassBunny);
         // Specify the materials
         // Add the objects into the scene
