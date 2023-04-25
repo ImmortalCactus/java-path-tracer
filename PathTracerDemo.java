@@ -17,7 +17,8 @@ class PathTracerDemo {
         Model metalBunny = new Model("./model/teapot.obj", new Metallic(new Vec3(1.0, 0.2, 0.2), 0));
         Sphere sphere1 = new Sphere(new Vec3(0, 0.4, -0.4), 0.3, new Dielectric(1.1));
         Sphere floor = new Sphere(new Vec3(0, -100, 0), 100, new Lambertian(new Vec3(0.1, 0.5, 0.3)));
-        world.add(metalBunny);
+        Transform transBunny = new Transform(metalBunny, new Vec3(0, 0, 0), new Vec3(0, 180, 0));
+        world.add(transBunny);
         //world.add(sphere1);
         //world.add(floor);
         // Specify the materials
