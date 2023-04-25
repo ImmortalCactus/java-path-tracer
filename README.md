@@ -16,4 +16,4 @@ This is a Java implementation of a simple path tracer. This is mainly for me pra
 - Textures
 - Rigid Transform
 ## Demo
-[Bunny](demo.png)
+![Bunny](demo.png)
