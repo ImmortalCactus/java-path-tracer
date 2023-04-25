@@ -77,7 +77,49 @@ class Sphere extends Hittable {
     }
 }
 
+class Rect extends Hittable {
+    private Vec3 u;
+    private Vec3 v;
+    private Vec3 normal;
+    private Vec3 pos;
+    private Material mat;
 
+    public Rect(Vec3 pos, Vec3 u, Vec3 v, Material m) {
+        this.pos = pos;
+        this.u = u;
+        this.normal = u.cross(v).unit();
+        this.v = u.cross(v).cross(u).unit().mul(v.length());
+        this.mat = m;
+    }
+
+    public HitRecord hit(Ray r, double tMin, double tMax) {
+        Vec3 o = r.origin();
+        Vec3 d = r.direction();
+        if (Math.abs(d.dot(normal)) < 1e-8) return new HitRecord(false);
+        double t = pos.sub(o).dot(normal) / d.dot(normal);
+        if (t < tMin || t > tMax) return new HitRecord(false);
+        Vec3 p = o.add(d.mul(t));
+        Vec3 posp = p.sub(pos);
+        if (Math.abs(posp.dot(u)) > u.lengthSquared() || Math.abs(posp.dot(v)) > v.lengthSquared()) return new HitRecord(false);
+        Vec3 n;
+        boolean frontFace;
+        if (d.dot(normal) < 0) {
+            frontFace = true;
+            n = normal;
+        } else {
+            frontFace = false;
+            n = normal.neg();
+        }
+        
+        return new HitRecord(
+                true,
+                t,
+                p,
+                n,
+                frontFace,
+                mat);
+    }
+}
 
 class HittableList extends Hittable {
     private ArrayList<Hittable> objects = new ArrayList<Hittable>();

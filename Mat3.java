@@ -22,7 +22,7 @@ class Mat3 {
     public Mat3 mul(Mat3 b){
         double[][] c = new double[3][3];
         for(int i=0; i<3; i++) for(int j=0; j<3; j++){
-            c[i][j] = this.m[i][0] * b.m[0][j] + this.m[i][1] * b.m[1][j] + this.m[i][0] * b.m[0][j];
+            c[i][j] = this.m[i][0] * b.m[0][j] + this.m[i][1] * b.m[1][j] + this.m[i][2] * b.m[2][j];
         }
         return new Mat3(c);
     }
@@ -55,5 +55,14 @@ class Mat3 {
             {0, 0, 1}
         };
         return new Mat3(a);
+    }
+
+    public void print() {
+        for(int i=0; i<3; i++) {
+            for(int j=0; j<3; j++){
+                System.err.print(m[i][j]+" ");
+            }
+            System.err.print("\n");
+        }
     }
 }
