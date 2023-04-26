@@ -77,7 +77,7 @@ public class Scene {
             return new Vec3();
         }
         HitRecord rec = world.hit(r, near, far);
-        if (rec.hit) {
+        if (rec != null) {
             ScatterRecord sRec = rec.mat.scatter(r, rec);
             Vec3 secondRayColor = rayColor(sRec.scattered, depth-1);
             

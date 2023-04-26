@@ -151,7 +151,6 @@ class Model extends Hittable {
         }
         //System.err.println(faceIndex);
         return new HitRecord(
-                true,
                 t,
                 projected,
                 uNormal,
@@ -160,9 +159,9 @@ class Model extends Hittable {
     }
 
     public HitRecord hit(Ray r, double tMin, double tMax) {
-        if (root.intersectBoundingBox(r, tMin, tMax) < 0) return new HitRecord(false);
+        if (root.intersectBoundingBox(r, tMin, tMax) < 0) return null;
         HitRecord hr = root.hit(r, tMin, tMax);
-        if (hr == null) return new HitRecord(false);
+        if (hr == null) return null;
         return hr;
     }
     

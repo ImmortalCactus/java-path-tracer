@@ -5,31 +5,19 @@ abstract class Hittable {
 }
     
 class HitRecord {
-    public final boolean hit;
     public final Vec3 p;
     public final Vec3 normal;
     public final Material mat;
     public final double t;
     public final boolean frontFace;
 
-    public HitRecord(boolean hit, double t, Vec3 p, Vec3 normal, boolean frontFace, Material mat) {
-        this.hit = hit;
+    public HitRecord(double t, Vec3 p, Vec3 normal, boolean frontFace, Material mat) {
         this.p = p;
         this.normal = normal;
         this.mat = mat;
         this.t = t;
         this.frontFace = frontFace;
     };
-
-    public HitRecord(boolean h) {
-        assert h == false;
-        this.hit = h;
-        this.p = null;
-        this.normal = null;
-        this.mat = null;
-        this.t = 0;
-        this.frontFace = false;
-    }
 }
 
 class Sphere extends Hittable {
@@ -51,7 +39,7 @@ class Sphere extends Hittable {
                 
         double discriminant = halfB*halfB - a*c;
         if (discriminant < 0) {
-            return new HitRecord(false);
+            return null; 
         }
 
         double sqrtD = Math.sqrt(discriminant);
@@ -59,7 +47,7 @@ class Sphere extends Hittable {
         if (root < tMin || tMax < root) {
             root = (-halfB + sqrtD) / a;
             if(root < tMin || tMax < root)
-                return new HitRecord(false);
+                return null;
         }
         
         Vec3 p = r.at(root);
@@ -67,7 +55,6 @@ class Sphere extends Hittable {
         boolean frontFace = (outwardNormal.dot(r.direction()) < 0);
         Vec3 normal = frontFace ? outwardNormal : outwardNormal.neg();
         return new HitRecord(
-                true,
                 root,
                 p,
                 normal,
@@ -95,12 +82,12 @@ class Rect extends Hittable {
     public HitRecord hit(Ray r, double tMin, double tMax) {
         Vec3 o = r.origin();
         Vec3 d = r.direction();
-        if (Math.abs(d.dot(normal)) < 1e-8) return new HitRecord(false);
+        if (Math.abs(d.dot(normal)) < 1e-8) return null;
         double t = pos.sub(o).dot(normal) / d.dot(normal);
-        if (t < tMin || t > tMax) return new HitRecord(false);
+        if (t < tMin || t > tMax) return null;
         Vec3 p = o.add(d.mul(t));
         Vec3 posp = p.sub(pos);
-        if (Math.abs(posp.dot(u)) > u.lengthSquared() || Math.abs(posp.dot(v)) > v.lengthSquared()) return new HitRecord(false);
+        if (Math.abs(posp.dot(u)) > u.lengthSquared() || Math.abs(posp.dot(v)) > v.lengthSquared()) return null;
         Vec3 n;
         boolean frontFace;
         if (d.dot(normal) < 0) {
@@ -112,7 +99,6 @@ class Rect extends Hittable {
         }
         
         return new HitRecord(
-                true,
                 t,
                 p,
                 n,
@@ -131,13 +117,12 @@ class HittableList extends Hittable {
         HitRecord closestHit = null;
         for(Hittable ob : objects) {
             HitRecord currentHR = ob.hit(r, tMin, far);
-            if(currentHR.hit == false) continue;
+            if(currentHR == null) continue;
             if(closestHit == null || closestHit.t > currentHR.t) {
                 closestHit = currentHR;
                 far = closestHit.t;
             }
         }
-        if(closestHit == null) return new HitRecord(false);
         return closestHit;
     }
     public void add(Hittable ob) {
